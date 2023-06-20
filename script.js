@@ -17,18 +17,45 @@ function displayTodos() {
   todoList.innerHTML = "";
   todos.forEach((todo) => {
     const li = document.createElement("li");
-    li.classList.add("list-group-item");
+    li.classList.add("list-group-item", "d-flex", "justify-content-between");
     const div = document.createElement("div");
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = todo.completed;
     checkbox.classList.add("form-check-input", "ms-1");
+    checkbox.addEventListener("change", (event) => {
+      event.preventDefault();
+
+      todo.completed = event.target.checked;
+
+      displayTodos();
+    });
     const span = document.createElement("span");
     span.innerText = todo.name;
+    span.style.textDecoration = todo.completed ? "line-through" : "none";
     span.classList.add("ms-2");
+    const rightDiv = document.createElement("div");
     div.append(checkbox);
     div.append(span);
     li.append(div);
+    //Edit button
+    const editButton = document.createElement("button");
+    editButton.classList.add("btn", "btn-primary", "btn-sm");
+    editButton.innerHTML = "Edit";
+    rightDiv.append(editButton);
+    //Delete button
+    const deleteButton = document.createElement("button");
+    deleteButton.classList.add("btn", "btn-danger", "btn-sm", "ms-2");
+    deleteButton.innerText = "Delete";
+    deleteButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      todos = todos.filter((clickedTodo) => {
+        return clickedTodo.id !== todo.id;
+      });
+      displayTodos();
+    });
+    rightDiv.append(deleteButton);
+    li.append(rightDiv);
     todoList.append(li);
   });
 }
