@@ -25,9 +25,7 @@ function displayTodos() {
     checkbox.classList.add("form-check-input", "ms-1");
     checkbox.addEventListener("change", (event) => {
       event.preventDefault();
-
       todo.completed = event.target.checked;
-
       displayTodos();
     });
     const span = document.createElement("span");
@@ -40,7 +38,16 @@ function displayTodos() {
     li.append(div);
     //Edit button
     const editButton = document.createElement("button");
-    editButton.classList.add("btn", "btn-primary", "btn-sm");
+    editButton.classList.add("btn", "btn-secondary", "btn-sm");
+    editButton.setAttribute("data-bs-toggle", "modal");
+    editButton.setAttribute("data-bs-target", "#editModal");
+    editButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      document.getElementById("todo-edit").value = todo.name;
+      document.getElementById("todo-id").value = todo.id;
+      sessionStorage.setItem("todoId", todo.id);
+    });
+
     editButton.innerHTML = "Edit";
     rightDiv.append(editButton);
     //Delete button
@@ -59,3 +66,19 @@ function displayTodos() {
     todoList.append(li);
   });
 }
+const editHandler = (event) => {
+  const storedVal = document.getElementById("todo-edit").value;
+  const todoId = sessionStorage.getItem("todoId");
+  event.preventDefault();
+  todos = todos.map((value) => {
+    return value.id === Number(todoId)
+      ? {
+          id: Number(todoId),
+          name: storedVal,
+          completed: false,
+        }
+      : value;
+  });
+  displayTodos();
+  document.getElementById("btn-close").click();
+};
